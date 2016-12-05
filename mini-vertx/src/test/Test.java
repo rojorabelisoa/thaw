@@ -90,4 +90,13 @@ public class Test {
         }
 	    return ret;
 	}
+	public static String getAllMessage() throws ClassNotFoundException, SQLException{
+		//get data
+		DbConnection db=new DbConnection();
+		Connection con =db.GetConn();
+		String query = "select message from News";
+		Statement st=con.createStatement();
+		ResultSet rset=st.executeQuery(query);  
+		return getFormattedResult(rset).toString();
+	}
 }
