@@ -1,8 +1,8 @@
+package fr.upem.main;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
@@ -13,7 +13,6 @@ import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.sockjs.BridgeOptions;
 import io.vertx.ext.web.handler.sockjs.PermittedOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-import test.Test;
 
 // java
 // --add-exports java.base/sun.nio.ch=ALL-UNNAMED
@@ -67,6 +66,6 @@ public class ExampleApp extends AbstractVerticle {
 	private void getAllDBs(RoutingContext routingContext) throws ClassNotFoundException, SQLException {
 	    routingContext.response()
 	       .putHeader("content-type", "application/json")
-	       .end(Test.getAllMessage());
+	       .end(Channel.getAllMessage());
 	  }
 }

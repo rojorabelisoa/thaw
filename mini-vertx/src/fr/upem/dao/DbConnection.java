@@ -1,9 +1,10 @@
-package dao;
+package fr.upem.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import properties.*;
+
+import fr.upem.properties.*;
 /**
  * @author rrabelis
  */
@@ -15,7 +16,7 @@ public class DbConnection
     public Connection GetConn() throws ClassNotFoundException, SQLException
     {
     	  Class.forName("org.sqlite.JDBC");  
-    	  String onnectionurl = "jdbc:sqlite:"+DefaultValue.databaseName;
+    	  String onnectionurl = "jdbc:sqlite:"+DefaultValue.getDatabasename();
           conn = DriverManager.getConnection(onnectionurl);
           return conn;
     }

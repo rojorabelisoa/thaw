@@ -1,0 +1,96 @@
+<project name="banque_tsika" default="run" basedir=".">
+    <property name="lib-jar-sqlite" value="/home/2in01/rrabelis/workspace-light/mini-vertx/lib/sqlite-jdbc-3.14.2.1.jar" />
+    <property name="dir-src" value="/home/2in01/rrabelis/workspace-light/mini-vertx/src" />
+    <property name="new-dir-src" value="/home/2in01/rrabelis/Bureau/projet/src" />
+    <property name="new-dir" value="/home/2in01/rrabelis/Bureau/projet" />
+
+    <target name="clean">
+        <delete dir="${new-dir-src}"/>
+        <mkdir dir="${new-dir}/src/fr/upem/dao" />
+        <mkdir dir="${new-dir}/src/fr/upem/factory" />
+        <mkdir dir="${new-dir}/src/fr/upem/main" />
+        <mkdir dir="${new-dir}/src/fr/upem/properties" />
+        <mkdir dir="${new-dir}/src/fr/upem/test" />
+         
+        <copy  todir="${new-dir-src}/fr/upem/dao"> 
+            <fileset dir="${dir-src}/fr/upem/dao"/>
+        </copy>
+        <copy  todir="${new-dir-src}/fr/upem/factory"> 
+            <fileset dir="${dir-src}/fr/upem/factory"/>
+        </copy>
+        <copy  todir="${new-dir-src}/fr/upem/main"> 
+            <fileset dir="${dir-src}/fr/upem/main"/>
+        </copy>
+        <copy  todir="${new-dir-src}/fr/upem/properties"> 
+            <fileset dir="${dir-src}/fr/upem/properties"/>
+        </copy>
+        <copy  todir="${new-dir-src}/fr/upem/test"> 
+            <fileset dir="${dir-src}/fr/upem/test"/>
+        </copy>
+        <copy  todir="${new-dir-src}/lib"> 
+            <fileset file="${lib-jar-sqlite}"/>
+        </copy>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="build/classes"/>
+        <javac srcdir="${dir-src}/fr/upem/properties" destdir="${new-dir}/src/fr/upem/properties"/>
+        <javac srcdir="${dir-src}/fr/upem/dao" destdir="${new-dir}/src/fr/upem/dao"/>
+        <javac srcdir="${dir-src}/fr/upem/factory" destdir="${new-dir}/src/upem/factory"/>
+        <javac srcdir="${dir-src}/fr/upem/main" destdir="${new-dir}/src/upem/main"/>
+        
+        <javac srcdir="${dir-src}/src/fr/upem/test" destdir="${new-dir}/fr/upem/test"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="build/jar"/>
+        <jar destfile="${new-dir}/build/jar/thaw.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="fr.upem.main.ExampleApp"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="build/jar/thaw.jar" fork="true"/>
+    </target>
+
+
+
+    <target name="dossierP" depends="">
+        <delete dir="${new-dir}"/>
+        <mkdir dir="${new-dir}" />
+        <mkdir dir="${new-dir}/web" />
+        <mkdir dir="${new-dir}/src" />
+        <mkdir dir="${new-dir}/lib" />
+        <mkdir dir="${new-dir}/classes" />
+         
+        <copy  todir="${new-dir-src}/banque"> 
+            <fileset dir="${dir-src}/banque"/>
+        </copy>
+        <copy     todir="${new-dir-src}/database"> 
+            <fileset dir="${dir-src}/database"/>
+        </copy>
+        <copy  todir="${new-dir-src}/servlet"> 
+            <fileset dir="${dir-src}/servlet"/>
+        </copy>
+        <copy  todir="${new-dir-src}/lib"> 
+            <fileset file="${lib-jar-sqlite}"/>
+        </copy>
+    </target>
+         
+    <target name="compilation" depends="dossierP">
+        <echo>Compilation</echo>        
+        <path id="classpath">
+            <fileset dir="${dir-dir}/lib">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+         
+        <javac includeantruntime="false" srcdir ="${new-dir-src}" destdir="temp/classes" debug="on" >
+            <classpath refid="classpath" />
+        </javac>
+        <echo>fin compilation</echo>        
+    </target>
+
+</project>

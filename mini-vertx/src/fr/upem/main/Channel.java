@@ -1,3 +1,4 @@
+package fr.upem.main;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -5,8 +6,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import dao.DbConnection;
-import properties.DefaultValue;
+import fr.upem.dao.DbConnection;
+import fr.upem.factory.QueryFactoryKit;
+import fr.upem.properties.DefaultValue;
 
 public class Channel {
 	private final int id;
@@ -23,7 +25,7 @@ public class Channel {
 		List<String> ret = new ArrayList<>();
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
-		String query = "select name "+DefaultValue.databaseName+" where type=\"table\" and name like \"ch_%\";";
+		String query = "select name "+DefaultValue.getDatabasename()+" where type=\"table\" and name like \"ch_%\";";
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);   
 		while (rset.next()){
@@ -52,6 +54,17 @@ public class Channel {
 		Statement s=con.createStatement();
         s.executeUpdate(query);            
         System.out.println(" *** insertion message réussi ***");
+	}
+	
+	
+	public static String getAllMessage() throws ClassNotFoundException, SQLException{
+		//get data
+		DbConnection db=new DbConnection();
+		Connection con =db.GetConn();
+		String query = "select * from News";
+		Statement st=con.createStatement();
+		ResultSet rset=st.executeQuery(query);  
+		return QueryFactoryKit.getFormattedResult(rset).toString();
 	}
 	
 }
