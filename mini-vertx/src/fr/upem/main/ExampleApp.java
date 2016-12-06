@@ -20,6 +20,9 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 // ExampleApp
 public class ExampleApp extends AbstractVerticle {
 	// method to run the app
+	
+    Channel c= new Channel("lemonde",1);
+
 
 	public static void main(String[] args) {
 		Vertx vertx = Vertx.vertx();
@@ -60,12 +63,24 @@ public class ExampleApp extends AbstractVerticle {
 					.format(Date.from(Instant.now()));
 			// Send the message back out to all clients with the timestamp
 			// prepended.
+			
+			Message m = new Message(1,message.body().toString());
+			try {
+				m.insertMessage(c);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			eb.publish("to-client", timestamp + ": " + message.body());
 		});
 	}
 	private void getAllDBs(RoutingContext routingContext) throws ClassNotFoundException, SQLException {
-	    routingContext.response()
+		routingContext.response()
 	       .putHeader("content-type", "application/json")
-	       .end(Channel.getAllMessage());
+	       .end(c.getAllMessageFromChannel());
 	  }
 }

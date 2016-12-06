@@ -13,14 +13,20 @@ import fr.upem.properties.DefaultValue;
 public class Channel {
 	private final int id;
 	private final String name;
-	private final String message;
 	private final int iduser;
-	public Channel(int id, String name, String message, int iduser) {
+	public Channel(int id, String name, int iduser) {
 		this.id = id;
 		this.name = name;
-		this.message = message;
 		this.iduser = iduser;
 	}
+
+	public Channel(String name, int iduser) {
+		this.id = 1;
+		this.name = name;
+		this.iduser = iduser;
+	}
+
+	//A déplacer
 	public List<String> getAllChannel() throws ClassNotFoundException, SQLException{
 		List<String> ret = new ArrayList<>();
 		DbConnection db=new DbConnection();
@@ -33,13 +39,13 @@ public class Channel {
         }
 		return ret;
 	}
-	public void createChannelMessage(Channel channel) throws ClassNotFoundException, SQLException{
+	//
+	public void createChannel() throws ClassNotFoundException, SQLException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
-		String query = "CREATE TABLE IF NOT EXISTS "+channel.name+" (\n"
-                + "	id integer,\n"
-                + "	name text,\n"
-                + "	message text,\n"
+		String query = "CREATE TABLE IF NOT EXISTS "+this.name+" (\n"
+                + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
+                + " message text,\n"
                 + "	iduser integer\n"
                 + ");";
 		Statement s=con.createStatement();
@@ -47,24 +53,17 @@ public class Channel {
         System.out.println(" *** creation channel réussi ***");
         
 	}
-	public void insertMessage(Channel channel) throws ClassNotFoundException, SQLException{
-		DbConnection db=new DbConnection();
-		Connection con =db.GetConn();
-		String query = "insert into "+channel.name+" (name,message,iduser) values ("+channel.name+", "+channel.message+", 1";
-		Statement s=con.createStatement();
-        s.executeUpdate(query);            
-        System.out.println(" *** insertion message réussi ***");
-	}
-	
-	
-	public static String getAllMessage() throws ClassNotFoundException, SQLException{
+	public String getAllMessageFromChannel() throws ClassNotFoundException, SQLException{
 		//get data
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
-		String query = "select * from News";
+		String query = "select message from " + this.getName();
 		Statement st=con.createStatement();
-		ResultSet rset=st.executeQuery(query);  
+		ResultSet rset=st.executeQuery(query);
 		return QueryFactoryKit.getFormattedResult(rset).toString();
+	}
+	public String getName() {
+		return name;
 	}
 	
 }

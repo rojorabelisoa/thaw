@@ -1,50 +1,62 @@
-<project name="banque_tsika" default="run" basedir=".">
-    <property name="lib-jar-sqlite" value="/home/2in01/rrabelis/workspace-light/mini-vertx/lib/sqlite-jdbc-3.14.2.1.jar" />
-    <property name="dir-src" value="/home/2in01/rrabelis/workspace-light/mini-vertx/src" />
-    <property name="new-dir-src" value="/home/2in01/rrabelis/Bureau/projet/src" />
-    <property name="new-dir" value="/home/2in01/rrabelis/Bureau/projet" />
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="mini-vertx">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../../../usr/local/apps/alternatives/eclipse/eclipse-4.6/"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="9"/>
+    <property name="source" value="9"/>
+    <path id="mini-vertx.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="vertx/lib/vertx-core-3.3.3.jar"/>
+        <pathelement location="vertx/lib/jackson-core-2.7.4.jar"/>
+        <pathelement location="vertx/lib/vertx-web-3.3.3.jar"/>
+        <pathelement location="vertx/lib/netty-transport-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/netty-common-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/netty-resolver-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/netty-resolver-dns-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/netty-codec-http-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/netty-codec-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/netty-buffer-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/netty-handler-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/netty-codec-dns-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/netty-codec-http2-4.1.5.Final.jar"/>
+        <pathelement location="vertx/lib/jackson-databind-2.7.4.jar"/>
+        <pathelement location="vertx/lib/jackson-annotations-2.7.0.jar"/>
+        <pathelement location="vertx/lib/netty-handler-proxy-4.1.5.Final.jar"/>
+        <pathelement location="lib/sqlite-jdbc-3.14.2.1.jar"/>
+        <pathelement location="lib/org.eclipse.egit.github.core-2.0.4.jar"/>
+        <pathelement location="lib/gson-2.2.4.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
     <target name="clean">
-        <delete dir="${new-dir-src}"/>
-        <mkdir dir="${new-dir}/src/fr/upem/dao" />
-        <mkdir dir="${new-dir}/src/fr/upem/factory" />
-        <mkdir dir="${new-dir}/src/fr/upem/main" />
-        <mkdir dir="${new-dir}/src/fr/upem/properties" />
-        <mkdir dir="${new-dir}/src/fr/upem/test" />
-         
-        <copy  todir="${new-dir-src}/fr/upem/dao"> 
-            <fileset dir="${dir-src}/fr/upem/dao"/>
-        </copy>
-        <copy  todir="${new-dir-src}/fr/upem/factory"> 
-            <fileset dir="${dir-src}/fr/upem/factory"/>
-        </copy>
-        <copy  todir="${new-dir-src}/fr/upem/main"> 
-            <fileset dir="${dir-src}/fr/upem/main"/>
-        </copy>
-        <copy  todir="${new-dir-src}/fr/upem/properties"> 
-            <fileset dir="${dir-src}/fr/upem/properties"/>
-        </copy>
-        <copy  todir="${new-dir-src}/fr/upem/test"> 
-            <fileset dir="${dir-src}/fr/upem/test"/>
-        </copy>
-        <copy  todir="${new-dir-src}/lib"> 
-            <fileset file="${lib-jar-sqlite}"/>
-        </copy>
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="mini-vertx.classpath"/>
+        </javac>
     </target>
 
-    <target name="compile" depends="clean">
-        <mkdir dir="build/classes"/>
-        <javac srcdir="${dir-src}/fr/upem/properties" destdir="${new-dir}/src/fr/upem/properties"/>
-        <javac srcdir="${dir-src}/fr/upem/dao" destdir="${new-dir}/src/fr/upem/dao"/>
-        <javac srcdir="${dir-src}/fr/upem/factory" destdir="${new-dir}/src/upem/factory"/>
-        <javac srcdir="${dir-src}/fr/upem/main" destdir="${new-dir}/src/upem/main"/>
-        
-        <javac srcdir="${dir-src}/src/fr/upem/test" destdir="${new-dir}/fr/upem/test"/>
-    </target>
-
-    <target name="jar" depends="compile">
-        <mkdir dir="build/jar"/>
-        <jar destfile="${new-dir}/build/jar/thaw.jar" basedir="build/classes">
+	<target name="jar">
+        <mkdir dir="bin/jar"/>
+        <jar destfile="bin/jar/thaw.jar" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class" value="fr.upem.main.ExampleApp"/>
             </manifest>
@@ -56,41 +68,39 @@
     </target>
 
 
-
-    <target name="dossierP" depends="">
-        <delete dir="${new-dir}"/>
-        <mkdir dir="${new-dir}" />
-        <mkdir dir="${new-dir}/web" />
-        <mkdir dir="${new-dir}/src" />
-        <mkdir dir="${new-dir}/lib" />
-        <mkdir dir="${new-dir}/classes" />
-         
-        <copy  todir="${new-dir-src}/banque"> 
-            <fileset dir="${dir-src}/banque"/>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
         </copy>
-        <copy     todir="${new-dir-src}/database"> 
-            <fileset dir="${dir-src}/database"/>
-        </copy>
-        <copy  todir="${new-dir-src}/servlet"> 
-            <fileset dir="${dir-src}/servlet"/>
-        </copy>
-        <copy  todir="${new-dir-src}/lib"> 
-            <fileset file="${lib-jar-sqlite}"/>
-        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
     </target>
-         
-    <target name="compilation" depends="dossierP">
-        <echo>Compilation</echo>        
-        <path id="classpath">
-            <fileset dir="${dir-dir}/lib">
-                <include name="*.jar"/>
-            </fileset>
-        </path>
-         
-        <javac includeantruntime="false" srcdir ="${new-dir-src}" destdir="temp/classes" debug="on" >
-            <classpath refid="classpath" />
-        </javac>
-        <echo>fin compilation</echo>        
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
     </target>
-
+    <target name="Test (2)">
+        <java classname="fr.upem.test.Test" failonerror="true" fork="yes">
+            <classpath refid="mini-vertx.classpath"/>
+        </java>
+    </target>
+    <target name="ExampleApp">
+        <java classname="fr.upem.main.ExampleApp" failonerror="true" fork="yes">
+            <jvmarg line="--add-exports java.base/sun.nio.ch=ALL-UNNAMED&#10;--add-exports java.base/sun.net.dns=ALL-UNNAMED"/>
+            <classpath refid="mini-vertx.classpath"/>
+        </java>
+    </target>
+    <target name="GitCommit">
+        <java classname="fr.upem.factory.GitCommit" failonerror="true" fork="yes">
+            <classpath refid="mini-vertx.classpath"/>
+        </java>
+    </target>
+    <target name="CommitGit">
+        <java classname="fr.upem.factory.CommitGit" failonerror="true" fork="yes">
+            <classpath refid="mini-vertx.classpath"/>
+        </java>
+    </target>
 </project>

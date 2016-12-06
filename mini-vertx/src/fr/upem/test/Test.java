@@ -1,14 +1,19 @@
 package fr.upem.test;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.upem.dao.DbConnection;
+import fr.upem.factory.CommitGitFactoryKit;
+import fr.upem.main.Channel;
 
 public class Test {
-	public static void main(String[] args) throws ClassNotFoundException, SQLException{
+	public static void main(String[] args) throws Exception{
 		// Creation database
 		/*String url = "jdbc:sqlite:testDB.db";
 		 
@@ -24,17 +29,8 @@ public class Test {
         }*/
 		//creation Table
 		
-		/*DbConnection db=new DbConnection();
-		Connection con =db.GetConn();
-		String query = "CREATE TABLE IF NOT EXISTS News (\n"
-                + "	id integer,\n"
-                + "	name text,\n"
-                + "	message text,\n"
-                + "	iduser integer\n"
-                + ");";
-		Statement s=con.createStatement();
-		s.execute(query);            
-        System.out.println(" *** creation channel réussi ***");*/
+		Channel news=new  Channel("LeMonde",2);
+		news.createChannel();
 		
 		// insertion données
 		/*DbConnection db=new DbConnection();
@@ -45,7 +41,7 @@ public class Test {
         System.out.println(" *** insertion message réussi ***");*/
 		
 		//get data
-		DbConnection db=new DbConnection();
+		/*DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
 		String query = "select * from News";
 		Statement st=con.createStatement();
@@ -55,7 +51,12 @@ public class Test {
 			System.out.println(rows+": "+rset.getString("message"));
 			rows++;
         }
-		System.out.print("number rows:"+rows);
+		System.out.print("number rows:"+rows);*/
+		/*List<String> commitList = new ArrayList<>();
+		commitList = CommitGitFactoryKit.getCommit("thaw", "rojorabelisoa");
+		for(String t:commitList){
+			System.out.println(t);
+		}*/
 		
     }
 }
