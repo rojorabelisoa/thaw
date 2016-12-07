@@ -29,7 +29,7 @@ public class Test {
         }*/
 		//creation Table
 		
-		Channel news=new  Channel("LeMonde",2);
+		Channel news=new  Channel("Basket",2);
 		news.createChannel();
 		
 		// insertion données

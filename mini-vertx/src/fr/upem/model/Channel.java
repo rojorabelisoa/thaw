@@ -1,4 +1,5 @@
 package fr.upem.model;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,20 +27,16 @@ public class Channel {
 		this.iduser = iduser;
 	}
 
-	public List<String> getAllChannel() throws ClassNotFoundException, SQLException{
-		List<String> ret = new ArrayList<>();
+	public String getAllChannel() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
 		String query = "SELECT name FROM sqlite_master where type=\"table\" and name like \"channel_%\";";
 		Statement st=con.createStatement();
-		ResultSet rset=st.executeQuery(query);   
-		while (rset.next()){
-			ret.add(rset.getString(0));
-        }
-		return ret;
+		ResultSet rset=st.executeQuery(query);
+		return QueryFactoryKit.getFormattedResult(rset).toString();
 	}
 	
-	public void createChannel() throws ClassNotFoundException, SQLException{
+	public void createChannel() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
 		String query = "CREATE TABLE IF NOT EXISTS channel_"+this.name+" (\n"
@@ -52,7 +49,15 @@ public class Channel {
         System.out.println(" *** creation channel réussi ***");
         
 	}
-	public String getAllMessageFromChannel(int limit) throws ClassNotFoundException, SQLException{
+	public String getAllMessageFromChannel() throws ClassNotFoundException, SQLException, IOException{
+		DbConnection db=new DbConnection();
+		Connection con =db.GetConn();
+		String query = "select message from " + this.getName();
+		Statement st=con.createStatement();
+		ResultSet rset=st.executeQuery(query);
+		return QueryFactoryKit.getFormattedResult(rset).toString();
+	}
+	public String getAllMessageFromChannel(int limit) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
 		String query = "select message from " + this.getName();

@@ -1,5 +1,6 @@
 package fr.upem.model;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,10 +16,10 @@ public class Message {
 		this.message = message;
 	}
 
-	public void insertMessage(Channel channel) throws ClassNotFoundException, SQLException{
+	public void insertMessage(Channel channel) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
-		String query = "insert into "+channel.getName()+" (message,iduser) values (\""+message+"\" ,"+idUser+")";
+		String query = "insert into channel_"+channel.getName()+" (message,iduser) values (\""+message+"\" ,"+idUser+")";
 		System.out.println(query);
 		Statement s=con.createStatement();
         s.executeUpdate(query);  

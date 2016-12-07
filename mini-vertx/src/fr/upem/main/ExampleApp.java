@@ -27,8 +27,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 // --add-exports java.base/sun.net.dns=ALL-UNNAMED
 // ExampleApp
 public class ExampleApp extends AbstractVerticle {
-	// method to run the app
-    Channel c= new Channel("lemonde",1);
+    Channel c= new Channel("Football",1);
     
 	public static void main(String[] args) {
 		Vertx vertx = Vertx.vertx();
@@ -39,73 +38,76 @@ public class ExampleApp extends AbstractVerticle {
 	public void start() throws Exception {
 		createWebSocket();
 		EventBus eb = vertx.eventBus();
-		// Register to listen for messages coming into the server
 		eb.consumer("to-server").handler(message -> {
-			// Create a timestamp string
-			String timestamp = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM)
-					.format(Date.from(Instant.now()));
-			// Send the message back out to all clients with the timestamp
-			// prepended.
-			String text = message.body().toString();
-			System.out.println("message body : "+message.body().toString());
-			String[] token = text.split(" ");
 			String ret = "";
-			if(token[0].equals("github")){
-				List<String> commitList = new ArrayList<>();
-				try {
-					commitList = CommitGitFactoryKit.getCommit(token[2], token[1]);
-					for(String t:commitList){
-						ret=ret+""+t+"\n";
-					}
-				}
-				catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			else{
-				Message m = new Message(1,message.body().toString());
-				try {
-					m.insertMessage(c);
-					ret =timestamp + ": " + message.body();
-				} catch (ClassNotFoundException | SQLException e) {
-					e.printStackTrace();
-				}
+			try {
+				ret = setMessage(message);
+			} catch (ClassNotFoundException | IOException | SQLException e) {
+				e.printStackTrace();
 			}
 			eb.publish("to-client", ret);
 		});
 	}
 
+	private String setMessage(io.vertx.core.eventbus.Message<Object> message) throws IOException, ClassNotFoundException, SQLException {
+		String timestamp = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date.from(Instant.now()));
+		String text = message.body().toString();
+		String[] token = text.split(" ");
+		String ret = "";
+		if(token[0].equals("github")){
+			List<String> commitList = new ArrayList<>();
+			commitList = CommitGitFactoryKit.getCommit(token[2], token[1]);
+			for(String t:commitList){
+				ret=ret+""+t+"\n";
+			}
+		}
+		else{
+			Message m = new Message(1,message.body().toString());
+			m.insertMessage(c);
+			ret =timestamp + ": " + message.body();
+		}
+		return ret;
+	}
+
 	private void createWebSocket() {
 		Router router = Router.router(vertx);
-		// Allow events for the specified addresses in/out of the event bus
-		// bridge
 		BridgeOptions opts = new BridgeOptions().addInboundPermitted(new PermittedOptions().setAddress("to-server"))
 				.addOutboundPermitted(new PermittedOptions().setAddress("to-client"));
-		// route to JSON REST APIs 
-	    router.get("/all").handler(this::getAllDBs);
-	    router.get("/getMessage/:id").handler(this::getARecord);
-	    
-		// the event bus bridge is created and added to the router.
+	    router.get("/all").handler(this::getAllMessages);
+	    router.get("/allChannel").handler(this::getAllChannel);
+	    router.get("/getMessage/:id").handler(this::getMessage);
 		SockJSHandler ebHandler = SockJSHandler.create(vertx).bridge(opts);
 		router.route("/eventbus/*").handler(ebHandler);
-		// A router for the static content.
 		router.route().handler(StaticHandler.create());
 		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
 		System.out.println("listen on port 8080");
 	}
-	private void getAllDBs(RoutingContext routingContext){
+	
+	private void getAllMessages(RoutingContext routingContext){
 		HttpServerResponse response = routingContext.response();
 		try {
 			routingContext.response()
 			   .putHeader("content-type", "application/json")
 			   .end(c.getAllMessageFromChannel(0));
-		} catch (ClassNotFoundException | SQLException e) {
+		} catch (ClassNotFoundException | SQLException | IOException e) {
 			response.setStatusCode(404).end();
 		      return;
 		}
 	}
-	private void getARecord(RoutingContext routingContext) {
+	
+	private void getAllChannel(RoutingContext routingContext){
+		HttpServerResponse response = routingContext.response();
+		try {
+			routingContext.response()
+			   .putHeader("content-type", "application/json")
+			   .end(c.getAllChannel());
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			response.setStatusCode(404).end();
+		      return;
+		}
+	}
+	
+	private void getMessage(RoutingContext routingContext) {
 	    HttpServerResponse response = routingContext.response();
 	    HttpServerRequest request = routingContext.request();
 	    int id = Integer.parseInt(request.getParam("id"));
@@ -117,8 +119,8 @@ public class ExampleApp extends AbstractVerticle {
 			routingContext.response()
 			   .putHeader("content-type", "application/json")
 			   .end(c.getAllMessageFromChannel(id));
-		} catch (ClassNotFoundException | SQLException e) {
-			response.setStatusCode(404).end();
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			response.setStatusCode(204).end();
 		      return;
 		} 
 	}
