@@ -9,6 +9,12 @@ import java.util.List;
 import io.vertx.core.json.JsonObject;
 
 public class QueryFactoryKit {
+	/**
+	 *  this function transform a resultset to Json
+	 * @param rset resulset of query
+	 * @return list Json
+	 * @throws SQLException
+	 */
 	public static List<JsonObject> getFormattedResult(ResultSet rset) throws SQLException {
 	    List<JsonObject> ret = new ArrayList<JsonObject>();
         // get column names

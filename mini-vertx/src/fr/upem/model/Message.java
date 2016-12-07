@@ -1,13 +1,10 @@
-package fr.upem.main;
+package fr.upem.model;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import fr.upem.dao.DbConnection;
-import fr.upem.factory.QueryFactoryKit;
-
 public class Message {
 	
 	private int idUser;

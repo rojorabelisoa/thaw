@@ -1,4 +1,4 @@
-package fr.upem.main;
+package fr.upem.model;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,12 +26,11 @@ public class Channel {
 		this.iduser = iduser;
 	}
 
-	//A déplacer
 	public List<String> getAllChannel() throws ClassNotFoundException, SQLException{
 		List<String> ret = new ArrayList<>();
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
-		String query = "select name "+DefaultValue.getDatabasename()+" where type=\"table\" and name like \"ch_%\";";
+		String query = "SELECT name FROM sqlite_master where type=\"table\" and name like \"channel_%\";";
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);   
 		while (rset.next()){
@@ -39,11 +38,11 @@ public class Channel {
         }
 		return ret;
 	}
-	//
+	
 	public void createChannel() throws ClassNotFoundException, SQLException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
-		String query = "CREATE TABLE IF NOT EXISTS "+this.name+" (\n"
+		String query = "CREATE TABLE IF NOT EXISTS channel_"+this.name+" (\n"
                 + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
                 + " message text,\n"
                 + "	iduser integer\n"
@@ -53,11 +52,13 @@ public class Channel {
         System.out.println(" *** creation channel réussi ***");
         
 	}
-	public String getAllMessageFromChannel() throws ClassNotFoundException, SQLException{
-		//get data
+	public String getAllMessageFromChannel(int limit) throws ClassNotFoundException, SQLException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
 		String query = "select message from " + this.getName();
+		if(limit!=0){
+			query = query+" limit "+limit;
+		}
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
 		return QueryFactoryKit.getFormattedResult(rset).toString();

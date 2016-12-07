@@ -12,7 +12,12 @@ public class DbConnection
 {
     Connection conn;
     public DbConnection(){conn = null;}
-
+    /**
+     * this function make connection java and sqlite with jdbc
+     * @return Connection succes
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     public Connection GetConn() throws ClassNotFoundException, SQLException
     {
     	  Class.forName("org.sqlite.JDBC");  

@@ -10,7 +10,7 @@ import java.util.List;
 
 import fr.upem.dao.DbConnection;
 import fr.upem.factory.CommitGitFactoryKit;
-import fr.upem.main.Channel;
+import fr.upem.model.Channel;
 
 public class Test {
 	public static void main(String[] args) throws Exception{
