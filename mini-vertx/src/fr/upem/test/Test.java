@@ -1,15 +1,5 @@
 package fr.upem.test;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import fr.upem.dao.DbConnection;
-import fr.upem.factory.CommitGitFactoryKit;
 import fr.upem.model.Channel;
 
 public class Test {

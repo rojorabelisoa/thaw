@@ -24,7 +24,8 @@ public class DbConnection
     {
     	DefaultValue c = new DefaultValue();
     	  Class.forName("org.sqlite.JDBC");  
-    	  String onnectionurl = "jdbc:sqlite:"+c.getDatabaseValues();
+    	  //String onnectionurl = "jdbc:sqlite:"+c.getDatabaseValues();
+    	  String onnectionurl = "jdbc:sqlite:testDB.db";
           conn = DriverManager.getConnection(onnectionurl);
           return conn;
     }

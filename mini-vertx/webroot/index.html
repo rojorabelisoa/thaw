@@ -9,7 +9,7 @@
       <script src="js/function.js"></script>
       <link rel="stylesheet" type="text/css" href="css/styles.css">
    </head>
-   <body>
+   <body onload="getallch();getallMessage();">
       <h1>Hello thaw</h1>
       <div id="chat" class="inset"></div>
       <div>
@@ -18,9 +18,11 @@
          </h1>
       </div>
       <form id="form1">
-         <input id="msg" type="text" size =35 class="inset"/>
-         <input type="submit" class= "inset example" value="envoyer" />  
+         <input id="msg" type="text" size =35 />
+         <input type="submit"  value="envoyer" />  
       </form>
+      <h2>liste des channels</h2>
+      <div id="channel"></div>
    </body>
 </html>
 

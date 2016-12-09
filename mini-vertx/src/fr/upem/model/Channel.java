@@ -4,12 +4,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 import fr.upem.dao.DbConnection;
 import fr.upem.factory.QueryFactoryKit;
-import fr.upem.properties.DefaultValue;
 
 public class Channel {
 	private final int id;
@@ -52,7 +49,7 @@ public class Channel {
 	public String getAllMessageFromChannel() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
-		String query = "select message from " + this.getName();
+		String query = "select message from Channel_" + this.getName();
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
 		return QueryFactoryKit.getFormattedResult(rset).toString();
@@ -60,7 +57,8 @@ public class Channel {
 	public String getAllMessageFromChannel(int limit) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
-		String query = "select message from " + this.getName();
+		String query = "select message from Channel_" + this.getName();
+		System.out.println(query);
 		if(limit!=0){
 			query = query+" limit "+limit;
 		}

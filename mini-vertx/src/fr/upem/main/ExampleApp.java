@@ -41,7 +41,7 @@ public class ExampleApp extends AbstractVerticle {
 		eb.consumer("to-server").handler(message -> {
 			String ret = "";
 			try {
-				ret = setMessage(message);
+				ret = sendMessage(message);
 			} catch (ClassNotFoundException | IOException | SQLException e) {
 				e.printStackTrace();
 			}
@@ -49,7 +49,7 @@ public class ExampleApp extends AbstractVerticle {
 		});
 	}
 
-	private String setMessage(io.vertx.core.eventbus.Message<Object> message) throws IOException, ClassNotFoundException, SQLException {
+	private String sendMessage(io.vertx.core.eventbus.Message<Object> message) throws IOException, ClassNotFoundException, SQLException {
 		String timestamp = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date.from(Instant.now()));
 		String text = message.body().toString();
 		String[] token = text.split(" ");
@@ -74,6 +74,7 @@ public class ExampleApp extends AbstractVerticle {
 		BridgeOptions opts = new BridgeOptions().addInboundPermitted(new PermittedOptions().setAddress("to-server"))
 				.addOutboundPermitted(new PermittedOptions().setAddress("to-client"));
 	    router.get("/all").handler(this::getAllMessages);
+	    router.get("/getMessage/:channel").handler(this::getAllMessagesByChannel);
 	    router.get("/allChannel").handler(this::getAllChannel);
 	    router.get("/getMessage/:id").handler(this::getMessage);
 		SockJSHandler ebHandler = SockJSHandler.create(vertx).bridge(opts);
@@ -81,6 +82,20 @@ public class ExampleApp extends AbstractVerticle {
 		router.route().handler(StaticHandler.create());
 		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
 		System.out.println("listen on port 8080");
+	}
+	
+	private void getAllMessagesByChannel(RoutingContext routingContext){
+		HttpServerRequest request = routingContext.request();
+	    String channel = request.getParam("channel");
+		HttpServerResponse response = routingContext.response();
+		try {
+			routingContext.response()
+			   .putHeader("content-type", "application/json")
+			   .end(c.getAllMessageFromChannel(0));
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			response.setStatusCode(404).end();
+		      return;
+		}
 	}
 	
 	private void getAllMessages(RoutingContext routingContext){
