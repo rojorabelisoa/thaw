@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import fr.upem.dao.DbConnection;
-import fr.upem.factory.QueryFactoryKit;
+import fr.upem.util.Utils;
+import io.vertx.core.json.JsonObject;
 
 public class Channel {
 	private final int id;
@@ -30,7 +32,15 @@ public class Channel {
 		String query = "SELECT name FROM sqlite_master where type=\"table\" and name like \"channel_%\";";
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
-		return QueryFactoryKit.getFormattedResult(rset).toString();
+		return Utils.getFormattedResult(rset).toString();
+	}
+	public List<JsonObject> getAllChannelName() throws ClassNotFoundException, SQLException, IOException{
+		DbConnection db=new DbConnection();
+		Connection con =db.GetConn();
+		String query = "SELECT name FROM sqlite_master where type=\"table\" and name like \"channel_%\";";
+		Statement st=con.createStatement();
+		ResultSet rset=st.executeQuery(query);
+		return Utils.getFormattedResult(rset);
 	}
 	
 	public void createChannel() throws ClassNotFoundException, SQLException, IOException{
@@ -52,7 +62,7 @@ public class Channel {
 		String query = "select message from Channel_" + this.getName();
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
-		return QueryFactoryKit.getFormattedResult(rset).toString();
+		return Utils.getFormattedResult(rset).toString();
 	}
 	public String getAllMessageFromChannel(int limit) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
@@ -64,7 +74,19 @@ public class Channel {
 		}
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
-		return QueryFactoryKit.getFormattedResult(rset).toString();
+		return Utils.getFormattedResult(rset).toString();
+	}
+	public String getAllMessageFromChannel(String channel,int limit) throws ClassNotFoundException, SQLException, IOException{
+		DbConnection db=new DbConnection();
+		Connection con =db.GetConn();
+		String query = "select message from Channel_" +channel;
+		System.out.println(query);
+		if(limit!=0){
+			query = query+" limit "+limit;
+		}
+		Statement st=con.createStatement();
+		ResultSet rset=st.executeQuery(query);
+		return Utils.getFormattedResult(rset).toString();
 	}
 	public String getName() {
 		return name;

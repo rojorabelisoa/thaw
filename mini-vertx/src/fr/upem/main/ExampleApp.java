@@ -1,13 +1,10 @@
 package fr.upem.main;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.Objects;
 
-import fr.upem.factory.CommitGitFactoryKit;
+import fr.upem.factory.MessageManagerFactory;
+import fr.upem.factory.MessageManagerInt;
 import fr.upem.model.Channel;
 import fr.upem.model.Message;
 import io.vertx.core.AbstractVerticle;
@@ -50,9 +47,10 @@ public class ExampleApp extends AbstractVerticle {
 	}
 
 	private String sendMessage(io.vertx.core.eventbus.Message<Object> message) throws IOException, ClassNotFoundException, SQLException {
-		String timestamp = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date.from(Instant.now()));
 		String text = message.body().toString();
-		String[] token = text.split(" ");
+		MessageManagerInt mgt = MessageManagerFactory.getMessageManager(c, text);
+		Message messages = mgt.catchMessage(c, text);
+		/*String[] token = text.split(" ");
 		String ret = "";
 		if(token[0].equals("github")){
 			List<String> commitList = new ArrayList<>();
@@ -63,35 +61,42 @@ public class ExampleApp extends AbstractVerticle {
 		}
 		else{
 			Message m = new Message(1,message.body().toString());
+			String timestamp = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date.from(Instant.now()));
 			m.insertMessage(c);
 			ret =timestamp + ": " + message.body();
-		}
-		return ret;
+		}*/
+		return messages.getMessage();
 	}
 
 	private void createWebSocket() {
 		Router router = Router.router(vertx);
 		BridgeOptions opts = new BridgeOptions().addInboundPermitted(new PermittedOptions().setAddress("to-server"))
 				.addOutboundPermitted(new PermittedOptions().setAddress("to-client"));
-	    router.get("/all").handler(this::getAllMessages);
-	    router.get("/getMessage/:channel").handler(this::getAllMessagesByChannel);
-	    router.get("/allChannel").handler(this::getAllChannel);
-	    router.get("/getMessage/:id").handler(this::getMessage);
+	    addroute(router);
 		SockJSHandler ebHandler = SockJSHandler.create(vertx).bridge(opts);
 		router.route("/eventbus/*").handler(ebHandler);
 		router.route().handler(StaticHandler.create());
 		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
 		System.out.println("listen on port 8080");
 	}
+
+	private void addroute(Router router) {
+		router.get("/all").handler(this::getAllMessages);
+	    router.get("/getMessages/:channel/:limit").handler(this::getAllMessagesByChannel);
+	    router.get("/allChannel").handler(this::getAllChannel);
+	    router.get("/getMessage/:id").handler(this::getMessage);
+	}
 	
 	private void getAllMessagesByChannel(RoutingContext routingContext){
 		HttpServerRequest request = routingContext.request();
 	    String channel = request.getParam("channel");
+	    Objects.requireNonNull(channel);
+	    int limit = Integer.parseInt(request.getParam("limit"));
 		HttpServerResponse response = routingContext.response();
 		try {
 			routingContext.response()
 			   .putHeader("content-type", "application/json")
-			   .end(c.getAllMessageFromChannel(0));
+			   .end(c.getAllMessageFromChannel(channel,limit));
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			response.setStatusCode(404).end();
 		      return;

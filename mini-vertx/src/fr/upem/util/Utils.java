@@ -1,4 +1,4 @@
-package fr.upem.factory;
+package fr.upem.util;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -8,7 +8,7 @@ import java.util.List;
 
 import io.vertx.core.json.JsonObject;
 
-public class QueryFactoryKit {
+public class Utils {
 	/**
 	 *  this function transform a resultset to Json
 	 * @param rset resulset of query
