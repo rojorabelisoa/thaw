@@ -18,6 +18,7 @@ $(function()
 	
 });
 function getallch() {
+  var t='<ul>';
      var url = "http://localhost:8080/allChannel";
     var xhr = new XMLHttpRequest();
     xhr.open('get', url, true);
@@ -25,10 +26,13 @@ function getallch() {
     xhr.onload = function() {
       var status = xhr.status;
       if (status == 200) {
-      	for(i=0;i<xhr.response.length;i++){
-        	$('#channel').append(xhr.response[i].NAME +    " - ");
-
-        }
+      	var data = xhr.response;
+        $.each(data, function(i, item) {
+          t +='<li><a href=#><span class="title">'+item.NAME.replace('channel_','')+'</span></a></li>';
+        });
+        t +='</ul>';
+        
+        $('#chanel').append(t);
       } else {
         callback(status);
       }
@@ -36,6 +40,7 @@ function getallch() {
     xhr.send();
   };
   function getallMessage() {
+    var t='<ul>';
      var url = "http://localhost:8080/all";
     var xhr = new XMLHttpRequest();
     xhr.open('get', url, true);
@@ -43,7 +48,13 @@ function getallch() {
     xhr.onload = function() {
       var status = xhr.status;
       if (status == 200) {
-        $('#chat').append(xhr.response[0].MESSAGE);
+         var data = xhr.response;
+      	$.each(data, function(i, item) {
+          t +='<li>'+item.MESSAGE+'</li>';
+        	
+        });
+        t +='</ul>';
+        $('#chat').append(t);
       } else {
         callback(status);
       }

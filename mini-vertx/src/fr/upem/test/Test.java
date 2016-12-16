@@ -1,6 +1,6 @@
 package fr.upem.test;
 
-import fr.upem.model.Channel;
+import fr.upem.model.User;
 
 public class Test {
 	public static void main(String[] args) throws Exception{
@@ -19,8 +19,10 @@ public class Test {
         }*/
 		//creation Table
 		
-		Channel news=new  Channel("Basket",2);
-		news.createChannel();
+		/*Channel news=new  Channel("Basket",2);
+		news.createChannel();*/
+		User u=new User("test","test");
+		u.createUser();
 		
 		// insertion données
 		/*DbConnection db=new DbConnection();
