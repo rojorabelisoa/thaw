@@ -37,4 +37,16 @@ public class User {
 		return new User(name);
 	}
 
+	public Channel getChannel() {
+		return channel;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
 }
