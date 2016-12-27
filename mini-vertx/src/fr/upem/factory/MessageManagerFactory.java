@@ -8,8 +8,8 @@ import fr.upem.model.Channel;
 public class MessageManagerFactory {
 	public static MessageManagerInt getMessageManager(Channel channel, String message) throws IOException{
 		String[] token = message.split(" ");
-		if(token[0].equals("github")){
-			MessageGitManager mgt = new MessageGitManager();
+		if(token[0].equals("github")|| token[0].equals("rss")){
+			MessageBotManager mgt = new MessageBotManager();
 			mgt.catchMessage(channel, message);
 		    return mgt;
 		}

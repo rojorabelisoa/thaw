@@ -11,8 +11,10 @@ import fr.upem.util.Utils;
 import io.vertx.core.json.JsonObject;
 
 public class Channel {
+	@SuppressWarnings("unused")
 	private final int id;
-	private final String name;
+	private String name;
+	@SuppressWarnings("unused")
 	private final int iduser;
 	public Channel(int id, String name, int iduser) {
 		this.id = id;
@@ -49,11 +51,12 @@ public class Channel {
 		String query = "CREATE TABLE IF NOT EXISTS channel_"+this.name+" (\n"
                 + "	id integer PRIMARY KEY AUTOINCREMENT,\n"
                 + " message text,\n"
-                + "	iduser integer\n"
+                + "	iduser integer,\n"
+                + "	date Datetime\n"
                 + ");";
 		Statement s=con.createStatement();
 		s.execute(query);            
-        System.out.println(" *** creation channel réussi ***");
+        System.out.println(" *** creation channels réussi ***");
         
 	}
 	public String getAllMessageFromChannel() throws ClassNotFoundException, SQLException, IOException{
@@ -67,8 +70,7 @@ public class Channel {
 	public String getAllMessageFromChannel(int limit) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
-		String query = "select message from Channel_" + this.getName();
-		System.out.println(query);
+		String query = "select name,message,date from Channel_" + this.getName()+",user where channel_" +this.getName()+".iduser=user.id";
 		if(limit!=0){
 			query = query+" limit "+limit;
 		}
@@ -80,7 +82,6 @@ public class Channel {
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
 		String query = "select message from Channel_" +channel;
-		System.out.println(query);
 		if(limit!=0){
 			query = query+" limit "+limit;
 		}
@@ -88,8 +89,21 @@ public class Channel {
 		ResultSet rset=st.executeQuery(query);
 		return Utils.getFormattedResult(rset).toString();
 	}
+	public String getAllMessageFromChannel(String channel) throws ClassNotFoundException, SQLException, IOException{
+		DbConnection db=new DbConnection();
+		Connection con =db.GetConn();
+		String query = "select name,message,date from Channel_" +channel+",user where channel_" +channel+".iduser=user.id";
+		Statement st=con.createStatement();
+		ResultSet rset=st.executeQuery(query);
+		return Utils.getFormattedResult(rset).toString();
+	}
 	public String getName() {
 		return name;
+	}
+
+	public void setChannel(String string) {
+		this.name = string;
+		
 	}
 	
 }

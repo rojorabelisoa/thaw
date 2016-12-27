@@ -5,10 +5,10 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="mini-vertx">
     <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../../../usr/local/apps/alternatives/eclipse/eclipse-4.6/"/>
+    <property name="ECLIPSE_HOME" value="../../../../../../Applications/Eclipse.app/Contents/Eclipse/"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="9"/>
-    <property name="source" value="9"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
     <path id="mini-vertx.classpath">
         <pathelement location="bin"/>
         <pathelement location="vertx/lib/vertx-core-3.3.3.jar"/>
@@ -27,14 +27,23 @@
         <pathelement location="vertx/lib/jackson-databind-2.7.4.jar"/>
         <pathelement location="vertx/lib/jackson-annotations-2.7.0.jar"/>
         <pathelement location="vertx/lib/netty-handler-proxy-4.1.5.Final.jar"/>
-        <pathelement location="lib/sqlite-jdbc-3.14.2.1.jar"/>
-        <pathelement location="lib/org.eclipse.egit.github.core-2.0.4.jar"/>
         <pathelement location="lib/gson-2.2.4.jar"/>
+        <pathelement location="lib/javax.json-1.0.jar"/>
+        <pathelement location="lib/org.eclipse.egit.github.core-2.0.4.jar"/>
+        <pathelement location="lib/sqlite-jdbc-3.14.2.1.jar"/>
+        <pathelement location="lib/jdom-1.1.1.jar"/>
+        <pathelement location="lib/rome-1.0.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="resources">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
@@ -50,24 +59,10 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
+            <src path="resources"/>
             <classpath refid="mini-vertx.classpath"/>
         </javac>
     </target>
-
-	<target name="jar">
-        <mkdir dir="bin/jar"/>
-        <jar destfile="bin/jar/thaw.jar" basedir="build/classes">
-            <manifest>
-                <attribute name="Main-Class" value="fr.upem.main.ExampleApp"/>
-            </manifest>
-        </jar>
-    </target>
-
-    <target name="run" depends="jar">
-        <java jar="build/jar/thaw.jar" fork="true"/>
-    </target>
-
-
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
         <copy todir="${ant.library.dir}">
@@ -82,24 +77,18 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="Test (2)">
-        <java classname="fr.upem.test.Test" failonerror="true" fork="yes">
+    <target name="ExampleApp (1)">
+        <java classname="fr.upem.main.ExampleApp" failonerror="true" fork="yes">
             <classpath refid="mini-vertx.classpath"/>
         </java>
     </target>
     <target name="ExampleApp">
-        <java classname="fr.upem.main.ExampleApp" failonerror="true" fork="yes">
-            <jvmarg line="--add-exports java.base/sun.nio.ch=ALL-UNNAMED&#10;--add-exports java.base/sun.net.dns=ALL-UNNAMED"/>
+        <java classname="ExampleApp" failonerror="true" fork="yes">
             <classpath refid="mini-vertx.classpath"/>
         </java>
     </target>
-    <target name="GitCommit">
-        <java classname="fr.upem.factory.GitCommit" failonerror="true" fork="yes">
-            <classpath refid="mini-vertx.classpath"/>
-        </java>
-    </target>
-    <target name="CommitGit">
-        <java classname="fr.upem.factory.CommitGit" failonerror="true" fork="yes">
+    <target name="Test (1)">
+        <java classname="fr.upem.test.Test" failonerror="true" fork="yes">
             <classpath refid="mini-vertx.classpath"/>
         </java>
     </target>

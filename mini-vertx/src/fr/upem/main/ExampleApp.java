@@ -1,15 +1,25 @@
 package fr.upem.main;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.upem.factory.MessageManagerFactory;
 import fr.upem.factory.MessageManagerInt;
 import fr.upem.model.Channel;
 import fr.upem.model.Message;
+import fr.upem.model.User;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
@@ -24,8 +34,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 // --add-exports java.base/sun.net.dns=ALL-UNNAMED
 // ExampleApp
 public class ExampleApp extends AbstractVerticle {
-    Channel c= new Channel("Football",1);
-    
+	Channel c = new Channel("Euronews",1);
 	public static void main(String[] args) {
 		Vertx vertx = Vertx.vertx();
 		vertx.deployVerticle(new ExampleApp());
@@ -39,6 +48,7 @@ public class ExampleApp extends AbstractVerticle {
 			String ret = "";
 			try {
 				ret = sendMessage(message);
+				System.out.println(ret);
 			} catch (ClassNotFoundException | IOException | SQLException e) {
 				e.printStackTrace();
 			}
@@ -50,22 +60,9 @@ public class ExampleApp extends AbstractVerticle {
 		String text = message.body().toString();
 		MessageManagerInt mgt = MessageManagerFactory.getMessageManager(c, text);
 		Message messages = mgt.catchMessage(c, text);
-		/*String[] token = text.split(" ");
-		String ret = "";
-		if(token[0].equals("github")){
-			List<String> commitList = new ArrayList<>();
-			commitList = CommitGitFactoryKit.getCommit(token[2], token[1]);
-			for(String t:commitList){
-				ret=ret+""+t+"\n";
-			}
-		}
-		else{
-			Message m = new Message(1,message.body().toString());
-			String timestamp = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date.from(Instant.now()));
-			m.insertMessage(c);
-			ret =timestamp + ": " + message.body();
-		}*/
-		return messages.getMessage();
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValueAsString(messages);
+		return mapper.writeValueAsString(messages);
 	}
 
 	private void createWebSocket() {
@@ -82,12 +79,129 @@ public class ExampleApp extends AbstractVerticle {
 
 	private void addroute(Router router) {
 		router.get("/all").handler(this::getAllMessages);
-	    router.get("/getMessages/:channel/:limit").handler(this::getAllMessagesByChannel);
+		router.get("/login").method(HttpMethod.POST).handler(this::login);
+		router.get("/register").method(HttpMethod.POST).handler(this::register);
+	    router.get("/createChannel/:channel").handler(this::createChannel);
+	    router.get("/current-channel/").handler(this::currentChannel);
+	    router.get("/getMessages/:channel").handler(this::getAllMessagesByChannel);
+	    router.get("/getMessages/:channel/:limit").handler(this::getAllMessagesByChannelCount);
 	    router.get("/allChannel").handler(this::getAllChannel);
 	    router.get("/getMessage/:id").handler(this::getMessage);
+	    router.route("/logout").handler(this::logout);
+	}
+
+	private void logout(RoutingContext routingContext) {
+		routingContext.clearUser();
+		routingContext.response().putHeader("location", "/").setStatusCode(302).end();
+	}
+	private void currentChannel(RoutingContext routingContext) {
+		String ret = "[{\"current\":\""+c.getName()+"\"}]";
+		routingContext.response()
+        .putHeader("Cache-Control", "no-store, no-cache")
+        .putHeader("X-Content-Type-Options", "nosniff")
+        .putHeader("Strict-Transport-Security", "max-age=" + 15768000)
+        .putHeader("X-Download-Options", "noopen")
+        .putHeader("X-XSS-Protection", "1; mode=block")
+        .putHeader("X-FRAME-OPTIONS", "DENY")
+		.putHeader("content-type", "application/json")
+		.end(ret);
 	}
 	
+	private void login(RoutingContext routingContext){
+		HttpServerRequest request = routingContext.request();
+		
+		request.bodyHandler(new Handler<Buffer>()
+        {
+            @Override
+            public void handle(Buffer buff)
+            {
+                String contentType = request.headers().get("Content-Type");
+                if ("application/x-www-form-urlencoded".equals(contentType))
+                {
+                    QueryStringDecoder qsd = new QueryStringDecoder(buff.toString(), false);
+                    Map<String, List<String>> params = qsd.parameters();
+                    String user = params.get("username").get(0);
+                    String password = params.get("password").get(0);
+                    try {
+						if(User.testUserValide(user,password)){
+						    routingContext.response().putHeader("location", "/chat.html").setStatusCode(302).end();
+						}
+						else{
+							routingContext.response().putHeader("location", "/").setStatusCode(302).end();
+						}
+					} catch (ClassNotFoundException | SQLException | IOException e) {
+						e.printStackTrace();
+					}
+                    
+                }
+            }
+        });
+	}
+	private void register(RoutingContext routingContext){
+		HttpServerRequest request = routingContext.request();
+		request.bodyHandler(new Handler<Buffer>()
+        {
+            @Override
+            public void handle(Buffer buff)
+            {
+                String contentType = request.headers().get("Content-Type");
+                if ("application/x-www-form-urlencoded".equals(contentType))
+                {
+                    QueryStringDecoder qsd = new QueryStringDecoder(buff.toString(), false);
+                    Map<String, List<String>> params = qsd.parameters();
+                    String user = params.get("username").get(0);
+                    String password = params.get("password").get(0);
+                    User u= new User(user, password);
+                    try {
+                    	u.createUser();
+					    routingContext.response().putHeader("location", "/").setStatusCode(302).end();
+						
+					} catch (ClassNotFoundException | SQLException | IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                    
+                }
+            }
+        });
+	}
+
 	private void getAllMessagesByChannel(RoutingContext routingContext){
+		HttpServerRequest request = routingContext.request();
+		
+	    String channel = request.getParam("channel");
+	    Objects.requireNonNull(channel);
+	    c.setChannel(channel);
+		HttpServerResponse response = routingContext.response();
+		try {
+			routingContext.response()
+	          .putHeader("Cache-Control", "no-store, no-cache")
+	          .putHeader("X-Content-Type-Options", "nosniff")
+	          .putHeader("Strict-Transport-Security", "max-age=" + 15768000)
+	          .putHeader("X-Download-Options", "noopen")
+	          .putHeader("X-XSS-Protection", "1; mode=block")
+	          .putHeader("X-FRAME-OPTIONS", "DENY")
+			  .putHeader("content-type", "application/json")
+			  .end(c.getAllMessageFromChannel(channel));
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			response.setStatusCode(404).end();
+		      return;
+		}
+	}
+	private void createChannel(RoutingContext routingContext){
+		HttpServerRequest request = routingContext.request();
+	    String channel = request.getParam("channel");
+	    Objects.requireNonNull(channel);
+	    Channel newchannel = new Channel(channel, 1) ;
+		try {
+			 newchannel.createChannel();
+		} catch (ClassNotFoundException | SQLException | IOException e) {
+			
+		      return;
+		}
+	}
+	
+	private void getAllMessagesByChannelCount(RoutingContext routingContext){
 		HttpServerRequest request = routingContext.request();
 	    String channel = request.getParam("channel");
 	    Objects.requireNonNull(channel);
@@ -95,8 +209,14 @@ public class ExampleApp extends AbstractVerticle {
 		HttpServerResponse response = routingContext.response();
 		try {
 			routingContext.response()
-			   .putHeader("content-type", "application/json")
-			   .end(c.getAllMessageFromChannel(channel,limit));
+	          .putHeader("Cache-Control", "no-store, no-cache")
+	          .putHeader("X-Content-Type-Options", "nosniff")
+	          .putHeader("Strict-Transport-Security", "max-age=" + 15768000)
+	          .putHeader("X-Download-Options", "noopen")
+	          .putHeader("X-XSS-Protection", "1; mode=block")
+	          .putHeader("X-FRAME-OPTIONS", "DENY")
+			  .putHeader("content-type", "application/json")
+			  .end(c.getAllMessageFromChannel(channel,limit));
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			response.setStatusCode(404).end();
 		      return;
@@ -107,8 +227,15 @@ public class ExampleApp extends AbstractVerticle {
 		HttpServerResponse response = routingContext.response();
 		try {
 			routingContext.response()
-			   .putHeader("content-type", "application/json")
-			   .end(c.getAllMessageFromChannel(0));
+			  .putHeader("Cache-Control", "no-store, no-cache")
+	          .putHeader("X-Content-Type-Options", "nosniff")
+	          .putHeader("Strict-Transport-Security", "max-age=" + 15768000)
+	          .putHeader("X-Download-Options", "noopen")
+	          .putHeader("X-XSS-Protection", "1; mode=block")
+	          .putHeader("X-FRAME-OPTIONS", "DENY")
+			  .putHeader("content-type", "application/json")
+			  .putHeader("content-type", "application/json")
+			  .end(c.getAllMessageFromChannel(0));
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			response.setStatusCode(404).end();
 		      return;
@@ -119,8 +246,15 @@ public class ExampleApp extends AbstractVerticle {
 		HttpServerResponse response = routingContext.response();
 		try {
 			routingContext.response()
-			   .putHeader("content-type", "application/json")
-			   .end(c.getAllChannel());
+			  .putHeader("Cache-Control", "no-store, no-cache")
+	          .putHeader("X-Content-Type-Options", "nosniff")
+	          .putHeader("Strict-Transport-Security", "max-age=" + 15768000)
+	          .putHeader("X-Download-Options", "noopen")
+	          .putHeader("X-XSS-Protection", "1; mode=block")
+	          .putHeader("X-FRAME-OPTIONS", "DENY")
+			  .putHeader("content-type", "application/json")
+			  .putHeader("content-type", "application/json")
+			  .end(c.getAllChannel());
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			response.setStatusCode(404).end();
 		      return;
@@ -137,8 +271,15 @@ public class ExampleApp extends AbstractVerticle {
 	    } 
 	    try {
 			routingContext.response()
-			   .putHeader("content-type", "application/json")
-			   .end(c.getAllMessageFromChannel(id));
+			  .putHeader("Cache-Control", "no-store, no-cache")
+	          .putHeader("X-Content-Type-Options", "nosniff")
+	          .putHeader("Strict-Transport-Security", "max-age=" + 15768000)
+	          .putHeader("X-Download-Options", "noopen")
+	          .putHeader("X-XSS-Protection", "1; mode=block")
+	          .putHeader("X-FRAME-OPTIONS", "DENY")
+			  .putHeader("content-type", "application/json")
+			  .putHeader("content-type", "application/json")
+			  .end(c.getAllMessageFromChannel(id));
 		} catch (ClassNotFoundException | SQLException | IOException e) {
 			response.setStatusCode(204).end();
 		      return;

@@ -5503,6 +5503,7 @@ body {
   margin: 0;
   padding: 0;
   margin-bottom: 20px;
+  
 }
 .page-container .sidebar-menu #main-menu li {
   position: relative;
@@ -5980,7 +5981,7 @@ float: left;
 }
 .page-container.sidebar-collapsed .sidebar-menu {
   z-index: 100;
-  width: 65px;
+  width: 135px;
 }
 .page-container.sidebar-collapsed .sidebar-menu .logo-env {
   display: block;
