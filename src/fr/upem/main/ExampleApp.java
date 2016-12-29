@@ -17,11 +17,13 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.StaticHandler;
@@ -34,9 +36,13 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 // --add-exports java.base/sun.net.dns=ALL-UNNAMED
 // ExampleApp
 public class ExampleApp extends AbstractVerticle {
-	Channel c = new Channel("Euronews",1);
+	private Channel c = new Channel("Euronews",1);
+	private String userconnect ="";
+	private int iduserconnect=1;
 	public static void main(String[] args) {
-		Vertx vertx = Vertx.vertx();
+		VertxOptions options = new VertxOptions(); 
+		options.setMaxEventLoopExecuteTime(Long.MAX_VALUE);
+		Vertx vertx = Vertx.vertx(options);
 		vertx.deployVerticle(new ExampleApp());
 	}
 
@@ -47,7 +53,7 @@ public class ExampleApp extends AbstractVerticle {
 		eb.consumer("to-server").handler(message -> {
 			String ret = "";
 			try {
-				ret = sendMessage(message);
+				ret = sendMessage(message,iduserconnect);
 				System.out.println(ret);
 			} catch (ClassNotFoundException | IOException | SQLException e) {
 				e.printStackTrace();
@@ -56,10 +62,10 @@ public class ExampleApp extends AbstractVerticle {
 		});
 	}
 
-	private String sendMessage(io.vertx.core.eventbus.Message<Object> message) throws IOException, ClassNotFoundException, SQLException {
+	private String sendMessage(io.vertx.core.eventbus.Message<Object> message,int iduser) throws IOException, ClassNotFoundException, SQLException {
 		String text = message.body().toString();
-		MessageManagerInt mgt = MessageManagerFactory.getMessageManager(c, text);
-		Message messages = mgt.catchMessage(c, text);
+		MessageManagerInt mgt = MessageManagerFactory.getMessageManager(c, text,iduser);
+		Message messages = mgt.catchMessage(c, text, iduser);
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.writeValueAsString(messages);
 		return mapper.writeValueAsString(messages);
@@ -92,10 +98,15 @@ public class ExampleApp extends AbstractVerticle {
 
 	private void logout(RoutingContext routingContext) {
 		routingContext.clearUser();
+		//Session session = routingContext.session();
+		//session.destroy();
 		routingContext.response().putHeader("location", "/").setStatusCode(302).end();
 	}
 	private void currentChannel(RoutingContext routingContext) {
-		String ret = "[{\"current\":\""+c.getName()+"\"}]";
+		//Session session = routingContext.session();
+		//String user = session.get("username");
+		String user = userconnect;
+		String ret = "[{\"current\":\""+c.getName()+"\",\"user\":\""+user+"\"}]";
 		routingContext.response()
         .putHeader("Cache-Control", "no-store, no-cache")
         .putHeader("X-Content-Type-Options", "nosniff")
@@ -109,12 +120,12 @@ public class ExampleApp extends AbstractVerticle {
 	
 	private void login(RoutingContext routingContext){
 		HttpServerRequest request = routingContext.request();
-		
 		request.bodyHandler(new Handler<Buffer>()
         {
             @Override
             public void handle(Buffer buff)
             {
+            	//Session session = routingContext.session();
                 String contentType = request.headers().get("Content-Type");
                 if ("application/x-www-form-urlencoded".equals(contentType))
                 {
@@ -123,7 +134,15 @@ public class ExampleApp extends AbstractVerticle {
                     String user = params.get("username").get(0);
                     String password = params.get("password").get(0);
                     try {
-						if(User.testUserValide(user,password)){
+                    	List<JsonObject> users = User.testUserValide(user,password);
+						if(users != null){
+							for(JsonObject jo : users){
+								iduserconnect = Integer.parseInt((String)jo.getValue("ID"));
+								userconnect = (String) jo.getValue("NAME");
+								
+							}
+							//session.put("username", "huhu");
+							//session.put("iduser", id);
 						    routingContext.response().putHeader("location", "/chat.html").setStatusCode(302).end();
 						}
 						else{
@@ -168,8 +187,7 @@ public class ExampleApp extends AbstractVerticle {
 
 	private void getAllMessagesByChannel(RoutingContext routingContext){
 		HttpServerRequest request = routingContext.request();
-		
-	    String channel = request.getParam("channel");
+		String channel = request.getParam("channel");
 	    Objects.requireNonNull(channel);
 	    c.setChannel(channel);
 		HttpServerResponse response = routingContext.response();
@@ -192,7 +210,7 @@ public class ExampleApp extends AbstractVerticle {
 		HttpServerRequest request = routingContext.request();
 	    String channel = request.getParam("channel");
 	    Objects.requireNonNull(channel);
-	    Channel newchannel = new Channel(channel, 1) ;
+	    Channel newchannel = new Channel(channel, iduserconnect) ;
 		try {
 			 newchannel.createChannel();
 		} catch (ClassNotFoundException | SQLException | IOException e) {

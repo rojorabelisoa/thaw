@@ -100,7 +100,8 @@ function getallMessage() {
 };
 
 function change_channel(chan) {
-    var url = qualifyURL("getMessages/" + chan+"");
+    var url = qualifyURL("/getMessages/" + chan+"");
+    //var url = 'http://localhost:8080/getMessages/' + chan;
     $('#list-message')
         .empty();
     window.location.reload();
@@ -137,6 +138,9 @@ function current_channel() {
             var data = xhr.response;
             $.each(data, function (i, item) {
                 $('#current_channel').append(item.current);
+            });
+            $.each(data, function (i, item) {
+                $('#user').append('<strong>'+item.user+'</strong>');
             });
             
         } else {

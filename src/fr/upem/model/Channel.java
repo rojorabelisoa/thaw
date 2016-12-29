@@ -34,7 +34,10 @@ public class Channel {
 		String query = "SELECT name FROM sqlite_master where type=\"table\" and name like \"channel_%\";";
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
-		return Utils.getFormattedResult(rset).toString();
+		String ret = Utils.getFormattedResult(rset).toString();
+		rset.close();
+		con.close();
+		return ret;
 	}
 	public List<JsonObject> getAllChannelName() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
@@ -42,7 +45,10 @@ public class Channel {
 		String query = "SELECT name FROM sqlite_master where type=\"table\" and name like \"channel_%\";";
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
-		return Utils.getFormattedResult(rset);
+		List<JsonObject> ret= Utils.getFormattedResult(rset);
+		rset.close();
+		con.close();
+		return ret;
 	}
 	
 	public void createChannel() throws ClassNotFoundException, SQLException, IOException{
@@ -57,6 +63,7 @@ public class Channel {
 		Statement s=con.createStatement();
 		s.execute(query);            
         System.out.println(" *** creation channels réussi ***");
+		con.close();
         
 	}
 	public String getAllMessageFromChannel() throws ClassNotFoundException, SQLException, IOException{
@@ -65,7 +72,10 @@ public class Channel {
 		String query = "select message from Channel_" + this.getName();
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
-		return Utils.getFormattedResult(rset).toString();
+		String ret = Utils.getFormattedResult(rset).toString();
+		rset.close();
+		con.close();
+		return ret;
 	}
 	public String getAllMessageFromChannel(int limit) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
@@ -76,7 +86,10 @@ public class Channel {
 		}
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
-		return Utils.getFormattedResult(rset).toString();
+		String ret = Utils.getFormattedResult(rset).toString();
+		rset.close();
+		con.close();
+		return ret;
 	}
 	public String getAllMessageFromChannel(String channel,int limit) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
@@ -87,7 +100,10 @@ public class Channel {
 		}
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
-		return Utils.getFormattedResult(rset).toString();
+		String ret = Utils.getFormattedResult(rset).toString();
+		rset.close();
+		con.close();
+		return ret;
 	}
 	public String getAllMessageFromChannel(String channel) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
@@ -95,7 +111,10 @@ public class Channel {
 		String query = "select name,message,date from Channel_" +channel+",user where channel_" +channel+".iduser=user.id";
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
-		return Utils.getFormattedResult(rset).toString();
+		String ret = Utils.getFormattedResult(rset).toString();
+		rset.close();
+		con.close();
+		return ret;
 	}
 	public String getName() {
 		return name;

@@ -26,8 +26,6 @@ public class Message {
 	public String getMessage() {
 		return message;
 	}
-
-
 	public void insertMessage(Channel channel) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -36,10 +34,6 @@ public class Message {
 		Statement s=con.createStatement();
         s.executeUpdate(query);  
         System.out.println(" *** insertion message réussi ***");
+        con.close();
 	}
-	
-	
-	
-	
-
 }

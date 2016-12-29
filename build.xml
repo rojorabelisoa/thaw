@@ -5,7 +5,6 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="mini-vertx">
     <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../../../../Applications/Eclipse.app/Contents/Eclipse/"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
@@ -77,18 +76,8 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="ExampleApp (1)">
-        <java classname="fr.upem.main.ExampleApp" failonerror="true" fork="yes">
-            <classpath refid="mini-vertx.classpath"/>
-        </java>
-    </target>
     <target name="ExampleApp">
-        <java classname="ExampleApp" failonerror="true" fork="yes">
-            <classpath refid="mini-vertx.classpath"/>
-        </java>
-    </target>
-    <target name="Test (1)">
-        <java classname="fr.upem.test.Test" failonerror="true" fork="yes">
+        <java classname="fr.upem.main.ExampleApp" failonerror="true" fork="yes">
             <classpath refid="mini-vertx.classpath"/>
         </java>
     </target>

@@ -12,7 +12,7 @@ import fr.upem.model.Message;
 public class MessageBotManager implements MessageManagerInt{
 
 	@Override
-	public Message catchMessage(Channel channel, String message) throws IOException {
+	public Message catchMessage(Channel channel, String message,int iduser) throws IOException {
 		String ret = "";
 		String[] token = message.split(" ");
 		List<String> commitList = new ArrayList<>();
@@ -35,7 +35,7 @@ public class MessageBotManager implements MessageManagerInt{
 				e.printStackTrace();
 			}
 		}
-		Message m = new Message(1,ret);
+		Message m = new Message(iduser,ret);
 		return m;
 	}
 

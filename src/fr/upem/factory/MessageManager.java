@@ -9,8 +9,8 @@ import fr.upem.model.Message;
 public class MessageManager implements MessageManagerInt {
 
 	@Override
-	public Message catchMessage(Channel channel, String message) throws ClassNotFoundException, SQLException, IOException {
-		Message m = new Message(1,message);
+	public Message catchMessage(Channel channel, String message, int iduser) throws ClassNotFoundException, SQLException, IOException {
+		Message m = new Message(iduser,message);
 		m.insertMessage(channel);
 		return m;
 		

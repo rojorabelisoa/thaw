@@ -1,34 +1,62 @@
+
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-    <meta http-equiv="Pragma" content="no-cache"/>
-    <meta http-equiv="Expires" content="0"/>
-    <link rel="stylesheet" href="css/style-login.css">
-    <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+		<meta charset="utf-8">
+		<link href="login/css/style.css" rel='stylesheet' type='text/css' />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+		
+		<!--webfonts-->
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text.css'/>
+		<!--//webfonts-->
 </head>
 <body>
-<script type="text/javascript">
-
-$('.message a').click(function(){
-   $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
-});
-</script>
-<div class="login-page">
-  <div class="form">
-    <form class="register-form"  action="register" method="post">
-      <input type="text" placeholder="name" name="username"/>
-      <input type="password" placeholder="password" name="password"/>
-      <button>create</button>
-      <p class="message">Already registered? <a href="#">Sign In</a></p>
-    </form>
-    <form class="login-form"  action="login" method="post">
-      <input type="text" placeholder="username" name="username"/>
-      <input type="password" placeholder="password" name="password"/>
-      <button>login</button>
-      <p class="message">Not registered? <a href="#">Create an account</a></p>
-    </form>
-  </div>
-</div>
+	<div class="main">
+		<div class="header" >
+			<h1>Bienvenue dans Thaw</h1>
+		</div>
+		<p>Thaw est une application gratuit de chat </p>
+			<form  action="register" method="post">
+				<ul class="left-form">
+					<h2>Devenir membre:</h2>
+					<li>
+						<input type="text"  name="username" placeholder="Nom d'utilisateur" required/>
+						<div class="clear"> </div>
+					</li> 
+					<li>
+						<input type="password"  name="password" placeholder="Mot de passe" id="password" required/>
+						<div class="clear"> </div>
+					</li> 
+					
+					<input type="submit" value="Creer compte">
+						<div class="clear"> </div>
+				</ul>
+				</form>
+				<form  action="login" method="post">
+				<ul class="right-form" style="
+    margin-top: -1%;
+">
+					<h3>Se connecter:</h3>
+					<div>
+						<li><input type="text" name="username" placeholder="Nom d'utilisateur" required autofocus/></li>
+						<li> <input type="password" name="password" placeholder="Mot de passe" required/></li>
+							<input type="submit" style="margin-left: 0%;" value="Se connecter" >
+					</div>
+					<div class="clear"> </div>
+				</ul>
+				<div class="clear"> </div>
+					
+			</form>
+			
+		</div>
+			
+	
 </body>
 </html>
-

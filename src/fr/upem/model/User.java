@@ -34,6 +34,7 @@ public class User {
 		Statement s=con.createStatement();
 		s.execute(query);            
         System.out.println(" *** creation user réussi ***");
+        con.close();
 	}
 	public void updateUser() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
@@ -42,6 +43,7 @@ public class User {
 		Statement s=con.createStatement();
 		s.execute(query);            
         System.out.println(" *** modification user réussi ***");
+        con.close();
 	}
 	public void deleteUser() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
@@ -50,6 +52,7 @@ public class User {
 		Statement s=con.createStatement();
 		s.execute(query);            
         System.out.println(" *** modification user réussi ***");
+        con.close();
 	}
 	public List<JsonObject> selectUser(String condition) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
@@ -60,10 +63,12 @@ public class User {
 		}
 		Statement st=con.createStatement();
 		ResultSet rset=st.executeQuery(query);
+		rset.close();
+		con.close();
 		return Utils.getFormattedResult(rset);
 	}
 
-	public static boolean testUserValide(String user, String password) throws ClassNotFoundException, SQLException, IOException {
+	public static List<JsonObject> testUserValide(String user, String password) throws ClassNotFoundException, SQLException, IOException {
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
 		String query = "SELECT * FROM user where 1<2 and name=\""+user+"\" and password=\""+password+"\"";
@@ -72,10 +77,13 @@ public class User {
 		ResultSet rset=st.executeQuery(query);
 		List<JsonObject> res= Utils.getFormattedResult(rset);
 		if(res.isEmpty()){
-			return false;
+			rset.close();
+			con.close();
+			return null;
 		}
-		System.out.println(res.get(0));
-		return true;
+		rset.close();
+		con.close();
+		return res;
 		
 	}
 }
