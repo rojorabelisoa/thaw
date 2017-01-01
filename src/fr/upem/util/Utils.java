@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.vertx.core.json.JsonObject;
-
+/**
+ * @author rrabelis
+ */
 public class Utils {
 	/**
 	 *  this function transform a resultset to Json

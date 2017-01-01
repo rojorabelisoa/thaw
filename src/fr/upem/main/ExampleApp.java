@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.upem.factory.MessageBotManager;
 import fr.upem.factory.MessageManagerFactory;
 import fr.upem.factory.MessageManagerInt;
 import fr.upem.model.Channel;
@@ -49,20 +49,26 @@ public class ExampleApp extends AbstractVerticle {
 	@Override
 	public void start() throws Exception {
 		createWebSocket();
+		MessageBotManager mbm = new MessageBotManager();
+		mbm.loadBots();
+		/* call bot*/
+		System.out.println("done!");
 		EventBus eb = vertx.eventBus();
 		eb.consumer("to-server").handler(message -> {
 			String ret = "";
 			try {
 				ret = sendMessage(message,iduserconnect);
 				System.out.println(ret);
-			} catch (ClassNotFoundException | IOException | SQLException e) {
+			} catch (ClassNotFoundException | IOException | SQLException |InterruptedException e) {
 				e.printStackTrace();
 			}
 			eb.publish("to-client", ret);
 		});
 	}
+	
+	
 
-	private String sendMessage(io.vertx.core.eventbus.Message<Object> message,int iduser) throws IOException, ClassNotFoundException, SQLException {
+	private String sendMessage(io.vertx.core.eventbus.Message<Object> message,int iduser) throws IOException, ClassNotFoundException, SQLException, InterruptedException {
 		String text = message.body().toString();
 		MessageManagerInt mgt = MessageManagerFactory.getMessageManager(c, text,iduser);
 		Message messages = mgt.catchMessage(c, text, iduser);

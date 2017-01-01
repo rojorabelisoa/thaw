@@ -7,6 +7,9 @@ import java.sql.Statement;
 import java.util.Date;
 
 import fr.upem.dao.DbConnection;
+/**
+ * @author rrabelis
+ */
 public class Message {
 	
 	private final int idUser;
@@ -18,14 +21,27 @@ public class Message {
 		this.message = message;
 		this.date = new Date();
 	}
+	/**
+	 * This function return the date of message
+	 * @return
+	 */
 	public Date getDate() {
 		return date;
 	}
-
-
+	/**
+	 * This function return the message
+	 * @return
+	 */
 	public String getMessage() {
 		return message;
 	}
+	/**
+	 * this function insert a message to database
+	 * @param channel
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public void insertMessage(Channel channel) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();

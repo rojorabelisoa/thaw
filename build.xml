@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="mini-vertx">
+<project basedir="." default="ExampleApp" name="mini-vertx">
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
@@ -26,37 +22,36 @@
         <pathelement location="vertx/lib/jackson-databind-2.7.4.jar"/>
         <pathelement location="vertx/lib/jackson-annotations-2.7.0.jar"/>
         <pathelement location="vertx/lib/netty-handler-proxy-4.1.5.Final.jar"/>
-        <pathelement location="lib/gson-2.2.4.jar"/>
-        <pathelement location="lib/javax.json-1.0.jar"/>
-        <pathelement location="lib/org.eclipse.egit.github.core-2.0.4.jar"/>
         <pathelement location="lib/sqlite-jdbc-3.14.2.1.jar"/>
-        <pathelement location="lib/jdom-1.1.1.jar"/>
         <pathelement location="lib/rome-1.0.jar"/>
+        <pathelement location="lib/org.eclipse.egit.github.core-2.0.4.jar"/>
+        <pathelement location="lib/jdom-1.1.1.jar"/>
+        <pathelement location="lib/javax.json-1.0.jar"/>
+        <pathelement location="lib/gson-2.2.4.jar"/>
+        <pathelement location="lib/bot.jar"/>
     </path>
     <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
+        <mkdir dir="classes"/>
+        <copy includeemptydirs="false" todir="classes">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
-        <copy includeemptydirs="false" todir="bin">
+        <copy includeemptydirs="false" todir="classes">
             <fileset dir="resources">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
     </target>
     <target name="clean">
-        <delete dir="bin"/>
+        <delete dir="classes"/>
     </target>
     <target depends="clean" name="cleanall"/>
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="classes" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
             <src path="resources"/>
             <classpath refid="mini-vertx.classpath"/>
@@ -76,8 +71,13 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="ExampleApp">
+    <target name="ExampleApp" depends="build">
         <java classname="fr.upem.main.ExampleApp" failonerror="true" fork="yes">
+            <classpath refid="mini-vertx.classpath"/>
+        </java>
+    </target>
+    <target name="Test">
+        <java classname="fr.upem.bot.Test" failonerror="true" fork="yes">
             <classpath refid="mini-vertx.classpath"/>
         </java>
     </target>

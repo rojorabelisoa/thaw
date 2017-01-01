@@ -10,7 +10,9 @@ import java.util.List;
 import fr.upem.dao.DbConnection;
 import fr.upem.util.Utils;
 import io.vertx.core.json.JsonObject;
-
+/**
+ * @author rrabelis
+ */
 public class User {
 	private final int id;
 	private final String name;
@@ -26,6 +28,12 @@ public class User {
 		this.name = name;
 		this.password = password;
 	}
+	/**
+	 * this function create user from database
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public void createUser() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -36,6 +44,12 @@ public class User {
         System.out.println(" *** creation user réussi ***");
         con.close();
 	}
+	/**
+	 * this function update user from database
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public void updateUser() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -45,6 +59,12 @@ public class User {
         System.out.println(" *** modification user réussi ***");
         con.close();
 	}
+	/**
+	 * This function delete user from database
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public void deleteUser() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -54,6 +74,14 @@ public class User {
         System.out.println(" *** modification user réussi ***");
         con.close();
 	}
+	/**
+	 * this function select user from database with condition begin with and
+	 * @param condition
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public List<JsonObject> selectUser(String condition) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -67,7 +95,15 @@ public class User {
 		con.close();
 		return Utils.getFormattedResult(rset);
 	}
-
+	/**
+	 * This function check if user and password in parameter exist in database 
+	 * @param user
+	 * @param password
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public static List<JsonObject> testUserValide(String user, String password) throws ClassNotFoundException, SQLException, IOException {
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();

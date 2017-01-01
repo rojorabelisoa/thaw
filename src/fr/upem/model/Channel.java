@@ -9,7 +9,9 @@ import java.util.List;
 import fr.upem.dao.DbConnection;
 import fr.upem.util.Utils;
 import io.vertx.core.json.JsonObject;
-
+/**
+ * @author rrabelis
+ */
 public class Channel {
 	@SuppressWarnings("unused")
 	private final int id;
@@ -27,7 +29,13 @@ public class Channel {
 		this.name = name;
 		this.iduser = iduser;
 	}
-
+	/**
+	 * This function get all channel in database and return a String
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public String getAllChannel() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -39,6 +47,13 @@ public class Channel {
 		con.close();
 		return ret;
 	}
+	/**
+	 * This function get all channel in database and return a List<JsonObject>
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public List<JsonObject> getAllChannelName() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -50,7 +65,13 @@ public class Channel {
 		con.close();
 		return ret;
 	}
-	
+	/**
+	 * This function create a new channel from database
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public void createChannel() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -66,6 +87,13 @@ public class Channel {
 		con.close();
         
 	}
+	/**
+	 * This function get all message from channel in database
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public String getAllMessageFromChannel() throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -77,6 +105,14 @@ public class Channel {
 		con.close();
 		return ret;
 	}
+	/**
+	 * This function get all message from channel and limit a rows in database
+	 * @param limit
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public String getAllMessageFromChannel(int limit) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -91,6 +127,15 @@ public class Channel {
 		con.close();
 		return ret;
 	}
+	/**
+	 * This function get all message from specific channel and limit a rows in database
+	 * @param channel
+	 * @param limit
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public String getAllMessageFromChannel(String channel,int limit) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -105,6 +150,14 @@ public class Channel {
 		con.close();
 		return ret;
 	}
+	/**
+	 * This function get all message from specific channel in database
+	 * @param channel
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public String getAllMessageFromChannel(String channel) throws ClassNotFoundException, SQLException, IOException{
 		DbConnection db=new DbConnection();
 		Connection con =db.GetConn();
@@ -116,10 +169,17 @@ public class Channel {
 		con.close();
 		return ret;
 	}
+	/**
+	 * This function return the name of current channel
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
-
+	/**
+	 * This funtion change current channel
+	 * @param string
+	 */
 	public void setChannel(String string) {
 		this.name = string;
 		

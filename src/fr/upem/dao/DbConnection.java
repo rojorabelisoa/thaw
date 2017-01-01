@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public class DbConnection
 {
-    Connection conn;
+    private Connection conn;
     public DbConnection(){conn = null;}
     /**
      * this function make connection java and sqlite with jdbc
@@ -26,30 +26,5 @@ public class DbConnection
           conn = DriverManager.getConnection(onnectionurl);
           return conn;
     }
-
-    public void commitON() throws SQLException
-    {
-      conn.setAutoCommit(true);
-    }
-
-    public void commitOFF() throws SQLException
-    {
-      conn.setAutoCommit(false);
-    }
-
-    public void close_connection() throws SQLException
-    {
-      conn.close();
-    }
-
-    public void valider() throws SQLException
-    {
-      conn.commit();
-    }
-
-    public void annuler() throws SQLException
-    {
-      conn.rollback();
-    }  
     
 }

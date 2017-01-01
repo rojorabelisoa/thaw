@@ -1,0 +1,5 @@
+rssLeMonde:RSS:lemonde.properties
+elmundo:RSS:elmundo.properties
+elmundo:RSS:elmundo.properties
+thaw:Git:commit.properties
+thaw:Git:commit.properties
